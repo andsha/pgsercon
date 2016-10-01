@@ -1,0 +1,232 @@
+Developer Options	allow_system_table_mods	boolean	off	Allows modifications of the structure of system tables.
+Error Reporting and Logging	application_name	string	'psql'	Sets the application name to be reported in statistics and logs.
+Write Ahead Log	archive_command	string	'(disabled)'	Sets the shell command that will be called to archive a WAL file.
+Write Ahead Log	archive_mode	boolean	off	Allows archiving of WAL files using archive_command.
+Write Ahead Log	archive_timeout	integer	0	Forces a switch to the next xlog file if a new file has not been started within N seconds.
+Version and Platform Compatibility	array_nulls	boolean	on	Enable input of NULL elements in arrays.
+Connections and Authentication	authentication_timeout	integer	1min	Sets the maximum allowed time to complete client authentication.
+Automatic Vacuuming	autovacuum	boolean	on	Starts the autovacuum subprocess.
+Automatic Vacuuming	autovacuum_analyze_scale_factor	floating point	0.1	Number of tuple inserts, updates, or deletes prior to analyze as a fraction of reltuples.
+Automatic Vacuuming	autovacuum_analyze_threshold	integer	50	Minimum number of tuple inserts, updates, or deletes prior to analyze.
+Automatic Vacuuming	autovacuum_freeze_max_age	integer	200000000	Age at which to autovacuum a table to prevent transaction ID wraparound.
+Automatic Vacuuming	autovacuum_max_workers	integer	3	Sets the maximum number of simultaneously running autovacuum worker processes.
+Automatic Vacuuming	autovacuum_multixact_freeze_max_age	integer	400000000	Multixact age at which to autovacuum a table to prevent multixact wraparound.
+Automatic Vacuuming	autovacuum_naptime	integer	1min	Time to sleep between autovacuum runs.
+Automatic Vacuuming	autovacuum_vacuum_cost_delay	integer	20ms	Vacuum cost delay in milliseconds, for autovacuum.
+Automatic Vacuuming	autovacuum_vacuum_cost_limit	integer	-1	Vacuum cost amount available before napping, for autovacuum.
+Automatic Vacuuming	autovacuum_vacuum_scale_factor	floating point	0.2	Number of tuple updates or deletes prior to vacuum as a fraction of reltuples.
+Automatic Vacuuming	autovacuum_vacuum_threshold	integer	50	Minimum number of tuple updates or deletes prior to vacuum.
+Version and Platform Compatibility	backslash_quote	enum	safe_encoding	Sets whether "\'" is allowed in string literals.
+Resource Consumption	bgwriter_delay	integer	200ms	Background writer sleep time between rounds.
+Resource Consumption	bgwriter_lru_maxpages	integer	100	Background writer maximum number of LRU pages to flush per round.
+Resource Consumption	bgwriter_lru_multiplier	floating point	2	Multiple of the average buffer usage to free per round.
+Preset Options	block_size	integer	8192	Shows the size of a disk block.
+Connections and Authentication	bonjour	boolean	off	Enables advertising the server via Bonjour.
+Connections and Authentication	bonjour_name	string	''	Sets the Bonjour service name.
+Client Connection Defaults	bytea_output	enum	hex	Sets the output format for bytea.
+Client Connection Defaults	check_function_bodies	boolean	on	Check function bodies during CREATE FUNCTION.
+Write Ahead Log	checkpoint_completion_target	floating point	0.5	Time spent flushing dirty buffers during checkpoint, as fraction of checkpoint interval.
+Write Ahead Log	checkpoint_segments	integer	3	Sets the maximum distance in log segments between automatic WAL checkpoints.
+Write Ahead Log	checkpoint_timeout	integer	5min	Sets the maximum time between automatic WAL checkpoints.
+Write Ahead Log	checkpoint_warning	integer	30s	Enables warnings if checkpoint segments are filled more frequently than this.
+Client Connection Defaults	client_encoding	string	'UTF8'	Sets the client's character set encoding.
+Error Reporting and Logging	client_min_messages	enum	notice	Sets the message levels that are sent to the client.
+Write Ahead Log	commit_delay	integer	0	Sets the delay in microseconds between transaction commit and flushing WAL to disk.
+Write Ahead Log	commit_siblings	integer	5	Sets the minimum concurrent open transactions before performing commit_delay.
+File Locations	config_file	string	'/Users/andsha/tmp/sdqw/postgresql.conf'	Sets the server's main configuration file.
+Query Planning	constraint_exclusion	enum	partition	Enables the planner to use constraints to optimize queries.
+Query Planning	cpu_index_tuple_cost	floating point	0.005	Sets the planner's estimate of the cost of processing each index entry during an index scan.
+Query Planning	cpu_operator_cost	floating point	0.0025	Sets the planner's estimate of the cost of processing each operator or function call.
+Query Planning	cpu_tuple_cost	floating point	0.01	Sets the planner's estimate of the cost of processing each tuple (row).
+Query Planning	cursor_tuple_fraction	floating point	0.1	Sets the planner's estimate of the fraction of a cursor's rows that will be retrieved.
+Preset Options	data_checksums	boolean	off	Shows whether data checksums are turned on for this cluster.
+File Locations	data_directory	string	'/Users/andsha/tmp/sdqw'	Sets the server's data directory.
+Client Connection Defaults	DateStyle	string	'ISO, DMY'	Sets the display format for date and time values.
+Connections and Authentication	db_user_namespace	boolean	off	Enables per-database user names.
+Lock Management	deadlock_timeout	integer	1s	Sets the time to wait on a lock before checking for deadlock.
+Developer Options	debug_assertions	boolean	off	Turns on various assertion checks.
+Error Reporting and Logging	debug_pretty_print	boolean	on	Indents parse and plan tree displays.
+Error Reporting and Logging	debug_print_parse	boolean	off	Logs each query's parse tree.
+Error Reporting and Logging	debug_print_plan	boolean	off	Logs each query's execution plan.
+Error Reporting and Logging	debug_print_rewritten	boolean	off	Logs each query's rewritten parse tree.
+Query Planning	default_statistics_target	integer	100	Sets the default statistics target.
+Client Connection Defaults	default_tablespace	string	''	Sets the default tablespace to create tables and indexes in.
+Client Connection Defaults	default_text_search_config	string	'pg_catalog.swedish'	Sets default text search configuration.
+Client Connection Defaults	default_transaction_deferrable	boolean	off	Sets the default deferrable status of new transactions.
+Client Connection Defaults	default_transaction_isolation	enum	read committed	Sets the transaction isolation level of each new transaction.
+Client Connection Defaults	default_transaction_read_only	boolean	off	Sets the default read-only status of new transactions.
+Version and Platform Compatibility	default_with_oids	boolean	off	Create new tables with OIDs by default.
+Client Connection Defaults	dynamic_library_path	string	'$libdir'	Sets the path for dynamically loadable modules.
+Query Planning	effective_cache_size	integer	128MB	Sets the planner's assumption about the size of the disk cache.
+Resource Consumption	effective_io_concurrency	integer	0	Number of simultaneous requests that can be handled efficiently by the disk subsystem.
+Query Planning	enable_bitmapscan	boolean	on	Enables the planner's use of bitmap-scan plans.
+Query Planning	enable_hashagg	boolean	on	Enables the planner's use of hashed aggregation plans.
+Query Planning	enable_hashjoin	boolean	on	Enables the planner's use of hash join plans.
+Query Planning	enable_indexonlyscan	boolean	on	Enables the planner's use of index-only-scan plans.
+Query Planning	enable_indexscan	boolean	on	Enables the planner's use of index-scan plans.
+Query Planning	enable_material	boolean	on	Enables the planner's use of materialization.
+Query Planning	enable_mergejoin	boolean	on	Enables the planner's use of merge join plans.
+Query Planning	enable_nestloop	boolean	on	Enables the planner's use of nested-loop join plans.
+Query Planning	enable_seqscan	boolean	on	Enables the planner's use of sequential-scan plans.
+Query Planning	enable_sort	boolean	on	Enables the planner's use of explicit sort steps.
+Query Planning	enable_tidscan	boolean	on	Enables the planner's use of TID scan plans.
+Version and Platform Compatibility	escape_string_warning	boolean	on	Warn about backslash escapes in ordinary string literals.
+Error Reporting and Logging	event_source	string	'PostgreSQL'	Sets the application name used to identify PostgreSQL messages in the event log.
+Error Handling	exit_on_error	boolean	off	Terminate session on any error.
+File Locations	external_pid_file	string	''	Writes the postmaster PID to the specified file.
+Client Connection Defaults	extra_float_digits	integer	0	Sets the number of digits displayed for floating-point values.
+Query Planning	from_collapse_limit	integer	8	Sets the FROM-list size beyond which subqueries are not collapsed.
+Write Ahead Log	fsync	boolean	on	Forces synchronization of updates to disk.
+Write Ahead Log	full_page_writes	boolean	on	Writes full pages to WAL when first modified after a checkpoint.
+Query Planning	geqo	boolean	on	Enables genetic query optimization.
+Query Planning	geqo_effort	integer	5	GEQO: effort is used to set the default for other GEQO parameters.
+Query Planning	geqo_generations	integer	0	GEQO: number of iterations of the algorithm.
+Query Planning	geqo_pool_size	integer	0	GEQO: number of individuals in the population.
+Query Planning	geqo_seed	floating point	0	GEQO: seed for random path selection.
+Query Planning	geqo_selection_bias	floating point	2	GEQO: selective pressure within the population.
+Query Planning	geqo_threshold	integer	12	Sets the threshold of FROM items beyond which GEQO is used.
+Client Connection Defaults	gin_fuzzy_search_limit	integer	0	Sets the maximum allowed result for exact search by GIN.
+File Locations	hba_file	string	'/Users/andsha/tmp/sdqw/pg_hba.conf'	Sets the server's "hba" configuration file.
+Replication	hot_standby	boolean	off	Allows connections and queries during recovery.
+Replication	hot_standby_feedback	boolean	off	Allows feedback from a hot standby to the primary that will avoid query conflicts.
+File Locations	ident_file	string	'/Users/andsha/tmp/sdqw/pg_ident.conf'	Sets the server's "ident" configuration file.
+Developer Options	ignore_checksum_failure	boolean	off	Continues processing after a checksum failure.
+Developer Options	ignore_system_indexes	boolean	off	Disables reading from system indexes.
+Preset Options	integer_datetimes	boolean	on	Datetimes are integer based.
+Client Connection Defaults	IntervalStyle	enum	postgres	Sets the display format for interval values.
+Query Planning	join_collapse_limit	integer	8	Sets the FROM-list size beyond which JOIN constructs are not flattened.
+Connections and Authentication	krb_caseins_users	boolean	off	Sets whether Kerberos and GSSAPI user names should be treated as case-insensitive.
+Connections and Authentication	krb_server_keyfile	string	'FILE:/usr/local/Cellar/postgresql93/9.3.14/etc/krb5.keytab'	Sets the location of the Kerberos server key file.
+Other	krb_srvname		postgres	Sets the name of the Kerberos service.
+Preset Options	lc_collate	string	'sv_SE.UTF-8'	Shows the collation order locale.
+Preset Options	lc_ctype	string	'sv_SE.UTF-8'	Shows the character classification and case conversion locale.
+Client Connection Defaults	lc_messages	string	'sv_SE.UTF-8'	Sets the language in which messages are displayed.
+Client Connection Defaults	lc_monetary	string	'sv_SE.UTF-8'	Sets the locale for formatting monetary amounts.
+Client Connection Defaults	lc_numeric	string	'sv_SE.UTF-8'	Sets the locale for formatting numbers.
+Client Connection Defaults	lc_time	string	'sv_SE.UTF-8'	Sets the locale for formatting date and time values.
+Connections and Authentication	listen_addresses	string	'localhost'	Sets the host name or IP address(es) to listen to.
+Version and Platform Compatibility	lo_compat_privileges	boolean	off	Enables backward compatibility mode for privilege checks on large objects.
+Client Connection Defaults	local_preload_libraries	string	''	Lists shared libraries to preload into each backend.
+Client Connection Defaults	lock_timeout	integer	0	Sets the maximum allowed duration of any wait for a lock.
+Automatic Vacuuming	log_autovacuum_min_duration	integer	-1	Sets the minimum execution time above which autovacuum actions will be logged.
+Error Reporting and Logging	log_checkpoints	boolean	off	Logs each checkpoint.
+Error Reporting and Logging	log_connections	boolean	off	Logs each successful connection.
+Error Reporting and Logging	log_destination	string	'stderr'	Sets the destination for server log output.
+Error Reporting and Logging	log_directory	string	'pg_log'	Sets the destination directory for log files.
+Error Reporting and Logging	log_disconnections	boolean	off	Logs end of a session, including duration.
+Error Reporting and Logging	log_duration	boolean	off	Logs the duration of each completed SQL statement.
+Error Reporting and Logging	log_error_verbosity	enum	default	Sets the verbosity of logged messages.
+Run-time Statistics	log_executor_stats	boolean	off	Writes executor performance statistics to the server log.
+Error Reporting and Logging	log_file_mode	integer	0600	Sets the file permissions for log files.
+Error Reporting and Logging	log_filename	string	'postgresql-%Y-%m-%d_%H%M%S.log'	Sets the file name pattern for log files.
+Error Reporting and Logging	log_hostname	boolean	off	Logs the host name in the connection logs.
+Error Reporting and Logging	log_line_prefix	string	''	Controls information prefixed to each log line.
+Error Reporting and Logging	log_lock_waits	boolean	off	Logs long lock waits.
+Error Reporting and Logging	log_min_duration_statement	integer	-1	Sets the minimum execution time above which statements will be logged.
+Error Reporting and Logging	log_min_error_statement	enum	error	Causes all statements generating error at or above this level to be logged.
+Error Reporting and Logging	log_min_messages	enum	warning	Sets the message levels that are logged.
+Run-time Statistics	log_parser_stats	boolean	off	Writes parser performance statistics to the server log.
+Run-time Statistics	log_planner_stats	boolean	off	Writes planner performance statistics to the server log.
+Error Reporting and Logging	log_rotation_age	integer	1d	Automatic log file rotation will occur after N minutes.
+Error Reporting and Logging	log_rotation_size	integer	10MB	Automatic log file rotation will occur after N kilobytes.
+Error Reporting and Logging	log_statement	enum	none	Sets the type of statements logged.
+Run-time Statistics	log_statement_stats	boolean	off	Writes cumulative performance statistics to the server log.
+Error Reporting and Logging	log_temp_files	integer	-1	Log the use of temporary files larger than this number of kilobytes.
+Error Reporting and Logging	log_timezone	string	'Europe/Stockholm'	Sets the time zone to use in log messages.
+Error Reporting and Logging	log_truncate_on_rotation	boolean	off	Truncate existing log files of same name during log rotation.
+Error Reporting and Logging	logging_collector	boolean	off	Start a subprocess to capture stderr output and/or csvlogs into log files.
+Resource Consumption	maintenance_work_mem	integer	16MB	Sets the maximum memory to be used for maintenance operations.
+Connections and Authentication	max_connections	integer	100	Sets the maximum number of concurrent connections.
+Resource Consumption	max_files_per_process	integer	1000	Sets the maximum number of simultaneously open files for each server process.
+Preset Options	max_function_args	integer	100	Shows the maximum number of function arguments.
+Preset Options	max_identifier_length	integer	63	Shows the maximum identifier length.
+Preset Options	max_index_keys	integer	32	Shows the maximum number of index keys.
+Lock Management	max_locks_per_transaction	integer	64	Sets the maximum number of locks per transaction.
+Lock Management	max_pred_locks_per_transaction	integer	64	Sets the maximum number of predicate locks per transaction.
+Resource Consumption	max_prepared_transactions	integer	0	Sets the maximum number of simultaneously prepared transactions.
+Resource Consumption	max_stack_depth	integer	2MB	Sets the maximum stack depth, in kilobytes.
+Replication	max_standby_archive_delay	integer	30s	Sets the maximum delay before canceling queries when a hot standby server is processing archived WAL data.
+Replication	max_standby_streaming_delay	integer	30s	Sets the maximum delay before canceling queries when a hot standby server is processing streamed WAL data.
+Replication	max_wal_senders	integer	0	Sets the maximum number of simultaneously running WAL sender processes.
+Connections and Authentication	password_encryption	boolean	on	Encrypt passwords.
+Connections and Authentication	port	integer	5400	Sets the TCP port the server listens on.
+Developer Options	post_auth_delay	integer	0	Waits N seconds on connection startup after authentication.
+Developer Options	pre_auth_delay	integer	0	Waits N seconds on connection startup before authentication.
+Version and Platform Compatibility	quote_all_identifiers	boolean	off	When generating SQL fragments, quote all identifiers.
+Query Planning	random_page_cost	floating point	4	Sets the planner's estimate of the cost of a nonsequentially fetched disk page.
+Error Handling	restart_after_crash	boolean	on	Reinitialize server after backend crash.
+Client Connection Defaults	search_path	string	'"$user",public'	Sets the schema search order for names that are not schema-qualified.
+Preset Options	segment_size	integer	1GB	Shows the number of pages per disk file.
+Query Planning	seq_page_cost	floating point	1	Sets the planner's estimate of the cost of a sequentially fetched disk page.
+Preset Options	server_encoding	string	'UTF8'	Sets the server (database) character set encoding.
+Preset Options	server_version	string	'9.3.14'	Shows the server version.
+Preset Options	server_version_num	integer	90314	Shows the server version as an integer.
+Client Connection Defaults	session_replication_role	enum	origin	Sets the session's behavior for triggers and rewrite rules.
+Resource Consumption	shared_buffers	integer	128MB	Sets the number of shared memory buffers used by the server.
+Client Connection Defaults	shared_preload_libraries	string	''	Lists shared libraries to preload into server.
+Version and Platform Compatibility	sql_inheritance	boolean	on	Causes subtables to be included by default in various commands.
+Connections and Authentication	ssl	boolean	off	Enables SSL connections.
+Connections and Authentication	ssl_ca_file	string	''	Location of the SSL certificate authority file.
+Connections and Authentication	ssl_cert_file	string	'server.crt'	Location of the SSL server certificate file.
+Connections and Authentication	ssl_ciphers	string	'DEFAULT:!LOW:!EXP:!MD5:@STRENGTH'	Sets the list of allowed SSL ciphers.
+Connections and Authentication	ssl_crl_file	string	''	Location of the SSL certificate revocation list file.
+Connections and Authentication	ssl_key_file	string	'server.key'	Location of the SSL server private key file.
+Connections and Authentication	ssl_renegotiation_limit	integer	0	Set the amount of traffic to send and receive before renegotiating the encryption keys.
+Version and Platform Compatibility	standard_conforming_strings	boolean	on	Causes '...' strings to treat backslashes literally.
+Client Connection Defaults	statement_timeout	integer	0	Sets the maximum allowed duration of any statement.
+Run-time Statistics	stats_temp_directory	string	'pg_stat_tmp'	Writes temporary statistics files to the specified directory.
+Connections and Authentication	superuser_reserved_connections	integer	3	Sets the number of connection slots reserved for superusers.
+Version and Platform Compatibility	synchronize_seqscans	boolean	on	Enable synchronized sequential scans.
+Write Ahead Log	synchronous_commit	enum	on	Sets the current transaction's synchronization level.
+Replication	synchronous_standby_names	string	''	List of names of potential synchronous standbys.
+Error Reporting and Logging	syslog_facility	enum	local0	Sets the syslog "facility" to be used when syslog enabled.
+Error Reporting and Logging	syslog_ident	string	'postgres'	Sets the program name used to identify PostgreSQL messages in syslog.
+Connections and Authentication	tcp_keepalives_count	integer	0	Maximum number of TCP keepalive retransmits.
+Connections and Authentication	tcp_keepalives_idle	integer	0	Time between issuing TCP keepalives.
+Connections and Authentication	tcp_keepalives_interval	integer	0	Time between TCP keepalive retransmits.
+Resource Consumption	temp_buffers	integer	8MB	Sets the maximum number of temporary buffers used by each session.
+Resource Consumption	temp_file_limit	integer	-1	Limits the total size of all temporary files used by each session.
+Client Connection Defaults	temp_tablespaces	string	''	Sets the tablespace(s) to use for temporary tables and sort files.
+Client Connection Defaults	TimeZone	string	'Europe/Stockholm'	Sets the time zone for displaying and interpreting time stamps.
+Client Connection Defaults	timezone_abbreviations	string	'Default'	Selects a file of time zone abbreviations.
+Developer Options	trace_notify	boolean	off	Generates debugging output for LISTEN and NOTIFY.
+Developer Options	trace_recovery_messages	enum	log	Enables logging of recovery-related debugging information.
+Developer Options	trace_sort	boolean	off	Emit information about resource usage in sorting.
+Run-time Statistics	track_activities	boolean	on	Collects information about executing commands.
+Run-time Statistics	track_activity_query_size	integer	1024	Sets the size reserved for pg_stat_activity.query, in bytes.
+Run-time Statistics	track_counts	boolean	on	Collects statistics on database activity.
+Run-time Statistics	track_functions	enum	none	Collects function-level statistics on database activity.
+Run-time Statistics	track_io_timing	boolean	off	Collects timing statistics for database I/O activity.
+Other	transaction_deferrable		off	Whether to defer a read-only serializable transaction until it can be executed with no possible serialization failures.
+Other	transaction_isolation		read committed	Sets the current transaction's isolation level.
+Other	transaction_read_only		off	Sets the current transaction's read-only status.
+Version and Platform Compatibility	transform_null_equals	boolean	off	Treats "expr=NULL" as "expr IS NULL".
+Connections and Authentication	unix_socket_directories	string	'/tmp'	Sets the directories where Unix-domain sockets will be created.
+Connections and Authentication	unix_socket_group	string	''	Sets the owning group of the Unix-domain socket.
+Connections and Authentication	unix_socket_permissions	integer	0777	Sets the access permissions of the Unix-domain socket.
+Run-time Statistics	update_process_title	boolean	on	Updates the process title to show the active SQL command.
+Resource Consumption	vacuum_cost_delay	integer	0	Vacuum cost delay in milliseconds.
+Resource Consumption	vacuum_cost_limit	integer	200	Vacuum cost amount available before napping.
+Resource Consumption	vacuum_cost_page_dirty	integer	20	Vacuum cost for a page dirtied by vacuum.
+Resource Consumption	vacuum_cost_page_hit	integer	1	Vacuum cost for a page found in the buffer cache.
+Resource Consumption	vacuum_cost_page_miss	integer	10	Vacuum cost for a page not found in the buffer cache.
+Replication	vacuum_defer_cleanup_age	integer	0	Number of transactions by which VACUUM and HOT cleanup should be deferred, if any.
+Client Connection Defaults	vacuum_freeze_min_age	integer	50000000	Minimum age at which VACUUM should freeze a table row.
+Client Connection Defaults	vacuum_freeze_table_age	integer	150000000	Age at which VACUUM should scan whole table to freeze tuples.
+Client Connection Defaults	vacuum_multixact_freeze_min_age	integer	5000000	Minimum age at which VACUUM should freeze a MultiXactId in a table row.
+Client Connection Defaults	vacuum_multixact_freeze_table_age	integer	150000000	Multixact age at which VACUUM should scan whole table to freeze tuples.
+Preset Options	wal_block_size	integer	8192	Shows the block size in the write ahead log.
+Write Ahead Log	wal_buffers	integer	4MB	Sets the number of disk-page buffers in shared memory for WAL.
+Replication	wal_keep_segments	integer	0	Sets the number of WAL files held for standby servers.
+Write Ahead Log	wal_level	enum	minimal	Set the level of information written to the WAL.
+Replication	wal_receiver_status_interval	integer	10s	Sets the maximum interval between WAL receiver status reports to the primary.
+Replication	wal_receiver_timeout	integer	1min	Sets the maximum wait time to receive data from the primary.
+Preset Options	wal_segment_size	integer	16MB	Shows the number of pages per write ahead log segment.
+Replication	wal_sender_timeout	integer	1min	Sets the maximum time to wait for WAL replication.
+Write Ahead Log	wal_sync_method	enum	open_datasync	Selects the method used for forcing WAL updates to disk.
+Write Ahead Log	wal_writer_delay	integer	200ms	WAL writer sleep time between WAL flushes.
+Resource Consumption	work_mem	integer	1MB	Sets the maximum memory to be used for query workspaces.
+Client Connection Defaults	xmlbinary	enum	base64	Sets how binary values are to be encoded in XML.
+Client Connection Defaults	xmloption	enum	content	Sets whether XML data in implicit parsing and serialization operations is to be considered as documents or content fragments.
+Developer Options	zero_damaged_pages	boolean	off	Continues processing past damaged page headers.
+Other	(231 rows)

@@ -1,25 +1,29 @@
 #!/usr/bin/env python
 
 import sys, os, json
-from PyQt4.QtGui import (
+from PyQt5.QtWidgets import (
     QWidget,QTableWidgetItem,
-    QHBoxLayout, QCheckBox,
+    QHBoxLayout, QGridLayout,
     QVBoxLayout,
-    QListWidget,
+    QDialog,
     QSplitter,
-    QStyleFactory,
-    QApplication, QBrush,
+    QLineEdit,
+    QApplication,
     QComboBox, QHeaderView, QHeaderView,
-    QListWidget, QCursor,
+    QListWidget,
     QLabel, QMenu, QAction,
     QPushButton, QListWidgetItem,
-    QFileDialog,QMessageBox, QColor,
+    QFileDialog,QMessageBox,
     QTableWidget, QAbstractItemView
 )
-
-from PyQt4.QtCore import Qt, QSize
+from PyQt5.QtGui import (QBrush,QColor,QCursor)
+from PyQt5.QtCore import Qt, QSize
 import webbrowser
-import templates
+from psutil import virtual_memory
+import platform
+import math
+
+#from PySide import QtCore, QtGui
 
 urlbase = 'https://www.postgresql.org/docs/'
 htmlist = {
@@ -41,6 +45,11 @@ htmlist = {
     "Developer Options" : "/static/runtime-config-developer.html" 
 }
 
+WINDOWS = 1000
+OSX =1001
+LINUX = 1002
+ERROS = 1009
+
 
 
 
@@ -49,9 +58,16 @@ class MainWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("PostgreSQL Server Configuration File")
-        self.dic = {} # {group_name : par_name: [type, default value, description, enum]}
+        self.dic = {} # {group_name : par_name: [type, value, unit, description, enum]}
         self.basedir = os.path.dirname(os.path.realpath(__file__))
+        #title=",".join(os.listdir("./pgsercon.app/"))
+        self.setWindowTitle(self.basedir)
+
         self.templates = {}
+        self.os = ERROS
+        self.memory = -1
+        self.connections = -1
+        self.version = 0
         self.initUI()
 
 
@@ -82,19 +98,9 @@ class MainWidget(QWidget):
         self.clearButton = QPushButton('Clear')
         self.clearButton.clicked.connect(self.clearConfig)
         templay.addWidget(self.clearButton)
-        label = QLabel('Insert template')
-        label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
-        templay.addWidget(label)
-        self.temp_list = QComboBox()
-        self.temp_list.addItem('Choose template')
-
-        for t in self.templates:
-            self.temp_list.addItem(t)
-
-        self.temp_list.activated.connect(self.insertTemplate)
-        self.temp_list.setSizeAdjustPolicy(0)
-
-        templay.addWidget(self.temp_list)
+        self.template = QPushButton('Insert Template...')
+        self.template.clicked.connect(self.insertTemplate)
+        templay.addWidget(self.template)
         templay.setStretch(0, 1)
         templay.setStretch(1, 2)
         self.leftl.addWidget(temp)
@@ -111,7 +117,8 @@ class MainWidget(QWidget):
         self.config.verticalHeader().setVisible(False)
         self.leftl.addWidget(self.config)
         self.config.cellDoubleClicked.connect(self.findPar)
-        self.config.currentCellChanged.connect(self.checkAllPar)
+        self.config.cellPressed.connect(self.checkAllPar)
+        self.config.cellChanged.connect(self.checkAllPar)
         self.config.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         # Config file loader
@@ -139,14 +146,15 @@ class MainWidget(QWidget):
         self.right.insertColumn(3)
         self.right.insertColumn(4)
         self.right.insertColumn(5)
-        self.right.horizontalHeader().setResizeMode(4, QHeaderView.Stretch)
+        self.right.insertColumn(6)
+        self.right.horizontalHeader().setSectionResizeMode(5, QHeaderView.Stretch)
         #self.right.horizontalHeader().setStretchLastSection(True)
-        self.right.setHorizontalHeaderLabels(('Use', 'Name', 'Type', 'Default', 'Description', ''))
+        self.right.setHorizontalHeaderLabels(('Use', 'Name', 'Type', 'Default', 'Unit', 'Description', ''))
         self.right.verticalHeader().setVisible(True)
         self.right.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.right.itemClicked.connect(self.changeCfg)
         self.right.cellEntered.connect(self.changeCsr)
-        self.right.setWordWrap(True)
+        #self.right.setWordWrap(True)
 
         splitter = QSplitter(Qt.Horizontal)
         splitter.addWidget(self.left)
@@ -165,19 +173,29 @@ class MainWidget(QWidget):
         self.combo.setCurrentIndex(self.combo.count()-1)
         self.choosePversion(idx = self.combo.count()-1)
 
-        self.temp_list.setCurrentIndex(0)
-        self.updateTemplates()
+        #self.temp_list.setCurrentIndex(0)
+        #self.updateTemplates()
 
 
-    def updateTemplates(self):
-        ver = self.combo.currentText()[9:]
-        self.templates = templates.templates(ver)
-        self.temp_list.clear()
-        self.temp_list.addItem('Choose template')
+    # def updateTemplates(self):
+    #     ver = self.combo.currentText()[9:]
+    #     self.templates = templates.templates(ver, self.dic)
+    #     self.temp_list.clear()
+    #     self.temp_list.addItem('Choose template')
+    #
+    #     for t in sorted(self.templates, ):
+    #         self.temp_list.addItem(t)
 
-        for t in sorted(self.templates, ):
-            self.temp_list.addItem(t)
 
+    def value(self, par):
+        for key in self.dic:
+            if par in self.dic[key]:
+                return self.dic[key][par][1]
+
+    def unit(self, par):
+        for key in self.dic:
+            if par in self.dic[key]:
+                return self.dic[key][par][2]
 
 
     def clearConfig(self):
@@ -203,6 +221,9 @@ class MainWidget(QWidget):
         if fdialog.exec_():
             fname = fdialog.selectedFiles()[0]
         else:
+            return 0
+
+        if not os.path.isfile(fname):
             return 0
 
         self.config.setRowCount(0)
@@ -243,13 +264,13 @@ class MainWidget(QWidget):
         if file == '':
             return 0
 
-        f = open(file, 'w')
+        f = open(file[0], 'w')
 
         for r in range(self.config.rowCount()):
             par = self.config.item(r,0).text()
             obj = self.config.cellWidget(r, 1)
             #print(type(obj))
-            if '%s' % type(obj) == "<class 'PyQt4.QtGui.QComboBox'>":
+            if type(obj) == type(QComboBox()):
                 val = obj.currentText()
             else:
                 val = self.config.item(r,1).text()
@@ -268,11 +289,13 @@ class MainWidget(QWidget):
 
         ver = self.combo.currentText().split(' ')[-1]
 
-        if not os.path.isfile(self.basedir + '/params%s' %ver):
+        if not os.path.isfile('params%s' %ver):
             return 0
 
-        with open(self.basedir + '/params%s' %ver, 'r') as file:
+        #open('params%s' % ver, 'r')
+        with open('params%s' % ver, 'r') as file:
             self.dic = json.load(file)
+
 
         for key in self.dic:
             self.mid.addItem(key)
@@ -282,7 +305,8 @@ class MainWidget(QWidget):
         self.checkAllPar()
         self.sortConf()
         file.close()
-        self.updateTemplates()
+        self.version = ver
+        #self.updateTemplates()
 
 
     def choosePar(self, litem):
@@ -318,11 +342,16 @@ class MainWidget(QWidget):
             item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             self.right.setItem(idx, 3, item)
 
-            # description
+            # Unit
             item = QTableWidgetItem(self.dic[litem.text()][par][2])
-            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.TextWordWrap)
-            item.setToolTip(self.dic[litem.text()][par][2])
+            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
             self.right.setItem(idx, 4, item)
+
+            # description
+            item = QTableWidgetItem(self.dic[litem.text()][par][3])
+            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.TextWordWrap)
+            item.setToolTip(self.dic[litem.text()][par][3])
+            self.right.setItem(idx, 5, item)
 
 
             item = QTableWidgetItem('More...')
@@ -333,13 +362,16 @@ class MainWidget(QWidget):
             brush = QBrush()
             brush.setColor(Qt.blue)
             item.setForeground(brush)
-            self.right.setItem(idx, 5, item)
+            self.right.setItem(idx, 6, item)
 
 
 
         self.right.resizeColumnToContents(0)
         self.right.resizeColumnToContents(1)
-        self.right.resizeColumnToContents(5)
+        self.right.resizeColumnToContents(2)
+       # self.right.resizeColumnToContents(3)
+        self.right.resizeColumnToContents(4)
+        self.right.resizeColumnToContents(6)
 
 
     def findPar(self, r, c):
@@ -381,6 +413,8 @@ class MainWidget(QWidget):
         for r in range(self.config.rowCount()):
             self.checkPar(r)
 
+        self.choosePar(litem=self.mid.currentItem())
+
     def checkPar(self, row):
         if self.config.item(row, 0) is not None:
             par = self.config.item(row, 0).text()
@@ -388,21 +422,22 @@ class MainWidget(QWidget):
             return 0
 
         obj = self.config.cellWidget(row, 1)
+        #print(obj)
             #val = self.config.item(row, 1).text()
 
             #obj = self.config.cellWidget(row, 1)
-        if '%s' % type(obj) == "<class 'PyQt4.QtGui.QComboBox'>":
+        if type(obj) == type(QComboBox()):
             val = obj.currentText()
+            #print(val)
         else:
             if self.config.item(row, 1) is not None:
                 val = self.config.item(row,1).text()
             else:
                 return 0
-
         found = False
         white = True
 
-        if self.config.item(row, 0).backgroundColor() == QColor(200, 255, 200, 255):
+        if self.config.item(row, 0).background().color() == QColor(200, 255, 200, 255):
             return 0
 
         for key in self.dic:
@@ -412,10 +447,10 @@ class MainWidget(QWidget):
                 if self.dic[key][par][1] != str(val):
                     #print(l[2], val)
                     white = False
-                    self.config.item(row,0).setBackgroundColor(QColor(200, 255, 255, 255))
+                    self.config.item(row,0).setBackground(QBrush(QColor(200, 255, 255, 255)))
 
-                    if '%s' % type(obj) != "<class 'PyQt4.QtGui.QComboBox'>":
-                        self.config.item(row, 1).setBackgroundColor(QColor(200, 255, 255, 255))
+                    if type(obj) != type(QComboBox()):
+                        self.config.item(row, 1).setBackground(QBrush(QColor(200, 255, 255, 255)))
 
                 break
 
@@ -425,16 +460,16 @@ class MainWidget(QWidget):
         # colr red if not found
         if not found:
             white = False
-            self.config.item(row, 0).setBackgroundColor(QColor(255, 200, 200, 255))
-            if '%s' % type(obj) != "<class 'PyQt4.QtGui.QComboBox'>":
-                self.config.item(row, 1).setBackgroundColor(QColor(255, 200, 200, 255))
+            self.config.item(row, 0).setBackground(QBrush(QColor(255, 200, 200, 255)))
+            if type(obj) != type(QComboBox()):
+                self.config.item(row, 1).setBackground(QBrush(QColor(255, 200, 200, 255)))
 
         # color white when same as default
         if white:
-            self.config.item(row, 0).setBackgroundColor(Qt.white)
+            self.config.item(row, 0).setBackground(Qt.white)
 
-            if '%s' % type(obj) != "<class 'PyQt4.QtGui.QComboBox'>":
-                self.config.item(row, 1).setBackgroundColor(Qt.white)
+            if type(obj) != type(QComboBox()):
+                self.config.item(row, 1).setBackground(QBrush(Qt.white))
 
 
 
@@ -453,14 +488,14 @@ class MainWidget(QWidget):
             if i is not None:
                 self.config.removeRow(i.row())
 
-        if item.column() == 5:
+        if item.column() == 6:
             self.onRenameHtml(self.right.item(item.row(), 1).text())
 
-        self.checkAllPar()
+        #self.checkAllPar()
 
 
     def changeCsr(self, r, c):
-        if c == 5:
+        if c == 6:
             self.setCursor(Qt.PointingHandCursor)
         else:
             self.setCursor(Qt.ArrowCursor)
@@ -479,7 +514,8 @@ class MainWidget(QWidget):
 
         item = QTableWidgetItem(par)
         item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsSelectable)
-        item.setBackgroundColor(color)
+        item.setBackground(QBrush(color))
+
         item.setToolTip('Double-click name to jump to description')
         self.config.setItem(self.config.rowCount() - 1, 0, item)
 
@@ -496,7 +532,7 @@ class MainWidget(QWidget):
             item.currentIndexChanged.connect(self.checkAllPar)
             self.config.setCellWidget(self.config.rowCount() - 1, 1, item)
         elif type == 'enum':
-            enum = self.dic[key][par][3].strip('}').strip('{').split(",")
+            enum = self.dic[key][par][4].strip('}').strip('{').split(",")
             item = QComboBox()
 
             for i in enum:
@@ -507,7 +543,7 @@ class MainWidget(QWidget):
             self.config.setCellWidget(self.config.rowCount() - 1, 1, item)
         else:
             item = QTableWidgetItem(val)
-            item.setBackgroundColor(color)
+            item.setBackground(QBrush(color))
             item.setToolTip('Double-click value to edit')
             self.config.setItem(self.config.rowCount() - 1, 1, item)
 
@@ -516,32 +552,185 @@ class MainWidget(QWidget):
 
         self.config.resizeColumnToContents(0)
 
+    def bytes(self, s = ''):
+        if s == 'kB' or s == 'KB':
+            return 1024
+        elif s == 'MB':
+            return 1024 * 1024
+        elif s == '8kB':
+            return 8 * 1024
+        else:
+            return 1
 
-    def insertTemplate(self, idx):
-        if idx == 0:
+
+    def insertTemplate(self):
+
+        tempWidget = templateWidget(parent = self, os = self.os, mem = self.memory, conn = self.connections)
+
+        if tempWidget.exec_() == 0:
             return 0
 
-        #i = self.config.rowCount()
-        for par in self.templates[self.temp_list.itemText(idx)]:
-            items = self.config.findItems(par, Qt.MatchExactly)
+        self.os = tempWidget.os
+        self.memory = tempWidget.memory # in bytes
+        self.connections = tempWidget.connections
+        mem = self.memory  # in bytes
+        shared_buffs = int(mem / 4 / self.bytes(self.unit('shared_buffers')))
 
-            if len(items) == 0:
-                val = self.templates[self.temp_list.itemText(idx)][par]
+        if self.os == WINDOWS:
+            shared_buffs = int(512 * 1024 * 1024 / self.bytes(self.unit('shared_buffers')))
 
-                #print(par, val)
-                if val == '__DEFAULT__':
-                    for key in self.dic:
-                        for p in self.dic[key]:
-                            #print(p)
-                            if p == par:
-                                #print(par, p[2])
-                                val = self.dic[key][p][1]
+        effective_cache_size = int(mem / 2 / self.bytes(self.unit('shared_buffers')))
+        checkpoint_segments = '32'
 
-                self.insertConfig(par,val)
+        if self.version == '9.6' or self.version == '9.5':
+            checkpoint_segments = '__NONE__'
+
+        checkpoint_completion_target = 0.9
+        work_mem = int(math.floor((float(mem) - float(shared_buffs)) / self.bytes(self.unit('shared_buffers')) / int(self.connections) / 5)) # 5 - number of tables accessed at the same time
+
+        templates = {"port" : "5432",
+                     "max_connections": "%s" %self.connections,
+                     "shared_buffers" : "%s" %shared_buffs,
+                     "effective_cache_size" : "%s" %effective_cache_size,
+                     "checkpoint_segments" : "%s" %checkpoint_segments,
+                     "checkpoint_completion_target" : "%s" %checkpoint_completion_target,
+                     "work_mem" : "%s" %work_mem
+                     }
+
+        for temp in templates:
+            if len(self.config.findItems(temp, Qt.MatchExactly)):
+                continue
+
+            if templates[temp] == '__NONE__':
+                continue
+
+            found = False
+
+            for key in self.dic:
+                if temp in self.dic[key]:
+                    val = templates[temp]
+
+                    if val == '__DEFAULT__':
+                        val = self.dic[key][temp][1]
+
+                    self.insertConfig(temp,val)
+                    found = True
+
+            if not found:
+                QMessageBox.about(self, 'Invalid argument', 'Could not create insert %s. It is not valid parameter in this version' %temp)
 
         self.config.resizeColumnToContents(0)
         self.sortConf()
         self.checkAllPar()
+
+
+
+class templateWidget(QDialog):
+    def __init__(self, parent, os = ERROS, mem = -1, conn = -1):
+        super(templateWidget, self).__init__(parent=parent)
+        self.parent = parent
+
+        self.os = os
+        self.memory = mem
+        self.connections = conn
+        self.initUI()
+
+
+    def initUI(self):
+        lay = QVBoxLayout(self)
+        topWidget = QWidget()
+        layout = QGridLayout(topWidget)
+        self.defaultButton = QPushButton('Get Default Values')
+        self.defaultButton.clicked.connect(self.defaultButtonClicked)
+        layout.addWidget(self.defaultButton, 0, 1)
+
+        # OS
+        label = QLabel('OS')
+        label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        layout.addWidget(label, 1,0)
+        self.OSComboBox = QComboBox()
+        self.OSComboBox.addItem('WINDOWS')
+        self.OSComboBox.addItem('OSX')
+        self.OSComboBox.addItem('LINUX')
+        layout.addWidget(self.OSComboBox, 1,1)
+
+        # Memory
+        label = QLabel('Memory')
+        label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        layout.addWidget(label, 2, 0)
+        self.memoryEdit = QLineEdit()
+        layout.addWidget(self.memoryEdit, 2, 1)
+        label = QLabel('GB')
+        layout.addWidget(label, 2, 2)
+
+        # Connections
+        label = QLabel('Max Connections')
+        label.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+        layout.addWidget(label, 3, 0)
+        self.connectionsEdit = QLineEdit()
+        layout.addWidget(self.connectionsEdit, 3,1)
+
+        lowWidget = QWidget()
+        layout = QHBoxLayout(lowWidget)
+
+        # OK
+        button = QPushButton('OK')
+        button.clicked.connect(self.accept)
+        layout.addWidget(button)
+
+        # Cancel
+        button = QPushButton('Cancel')
+        button.clicked.connect(self.reject)
+        layout.addWidget(button)
+
+        lay.addWidget(topWidget)
+        lay.addWidget(lowWidget)
+
+        self.defaultButtonClicked()
+
+
+    def defaultButtonClicked(self):
+        if platform.system() == 'Darwin':
+            self.os = OSX
+        elif platform.system() == 'Linux':
+            self.os = LINUX
+        elif platform.system() == 'Windows':
+            self.os = WINDOWS
+        else:
+            QMessageBox.about(self, 'Could not identify Operation System.\nPlease choose correct OS from list')
+            self.os = ERROS
+
+        self.memory = virtual_memory().total
+        self.connections = self.parent.value('max_connections')
+        #print(self.parent.dic )
+        self.updateEditValues()
+
+
+    def updateEditValues(self):
+        self.OSComboBox.setCurrentIndex(-1 if self.os == ERROS else self.os - 1000)
+        self.memoryEdit.setText('' if self.memory == -1 else str(self.memory / (1024*1024*1024)))
+        self.connectionsEdit.setText('' if self.connections == -1 else str(self.connections))
+
+    def accept(self):
+        s = self.OSComboBox.currentText()
+
+        if s == "WINDOWS":
+            self.os = WINDOWS
+        elif s == 'OSX':
+            self.os = OSX
+        elif s == 'LINUX':
+            self.os == LINUX
+
+        self.memory = float(self.memoryEdit.text()) * 1024 * 1024 * 1024
+        self.connections = int(self.connectionsEdit.text())
+
+        super(templateWidget, self).accept()
+
+
+
+
+
+
 
 
 if __name__ == '__main__':

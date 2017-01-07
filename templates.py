@@ -1,43 +1,10 @@
 #!/usr/bin/env python
 
-import subprocess, logging
+
+def templates(ver, defaults):
 
 
 
-
-def templates(ver):
-    # shmall = None
-    # shmmax = None
-    # result = subprocess.Popen(["sysctl", "-a"], stdout=subprocess.PIPE, universal_newlines = True, bufsize = -1).communicate()[0]
-    #
-    # if result:
-    #     for l in result.split('\n'):
-    #         if shmall and shmmax:
-    #             break
-    #         if 'shmmax' in l:
-    #             shmmax = int(l.split(':')[1].strip())
-    #         elif 'shmall' in l:
-    #             shmall = int(l.split(':')[1].strip())
-    #
-    # if shmall is None and shmmax is None:
-    #     logging.error('Cannot read shmmax and shmall settings')
-    #     return {}
-    #
-    # shmmax = shmmax / 1048576
-    # shmall = shmall / 1048576
-    #
-    # if shmmax > 1024:
-    #     shared = min(shmmax / 6, shmall / 3, 2048)
-    # else:
-    #     shared = min(shmmax / 8, shmall / 3)
-    # if shared < 2:
-    #     shared = 8
-    # #logging.debug(shared)
-    #
-    # wal = 1
-    # if (shmmax - shared) > 100:
-    #     wal = 32
-    # cache = shared * 2
 
     templates = {
         "Memory Allocations": {
